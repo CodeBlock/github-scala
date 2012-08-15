@@ -21,4 +21,5 @@ class AuthenticationSpec extends FunSpec
         assert(exception.code == 401)
       }
     }
+
 }

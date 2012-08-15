@@ -52,9 +52,12 @@ class GitHub(private val username: String,
   val http = new Http() with NoLogging
   implicit val formats = net.liftweb.json.DefaultFormats
 
-  // Attempt to get an authentication token.
+  /** Attempt to authenticate with GitHub via OAuth.
+    *
+    * @return an AuthenticationResponse, which contains the response from GitHub
+    *         in the form of an object.
+    */
   def acquireToken(): GitHub.AuthenticationResponse = {
-
     val data = compact(render(decompose(
       Map(
         "scopes" -> scopes,
@@ -65,5 +68,6 @@ class GitHub(private val username: String,
     val request = :/("api.github.com", 443) / "authorizations"
     http(request.POST.secure.as_!(username, password) << data >- parse)
       .extract[GitHub.AuthenticationResponse]
+
   }
 }
