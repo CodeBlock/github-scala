@@ -13,6 +13,7 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "1.8" % "test",
-  "net.databinder.dispatch" %% "core" % "0.9.0",
-  "net.liftweb" %% "lift-json" % "2.5-SNAPSHOT"
+  "net.databinder" %% "dispatch-http" % "0.8.8",
+  "net.databinder" %% "dispatch-http-json" % "0.8.8",
+  "net.liftweb" % "lift-json_2.9.1" % "2.4"
 )
