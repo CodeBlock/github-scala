@@ -30,7 +30,7 @@ object GitHub {
     * @param password the person's GitHub password
     * @param scopes API scopes being requested. To request all possible scopes,
     *        pass [[GitHub.Authorization.AllScopes]].
-    * @return a [[GitHub.Authentication.Response]], which contains the response
+    * @return a [[GitHub.Authorization.Response]], which contains the response
     *         from GitHub in the form of an object.
     */
   def basicAuthentication(
@@ -53,6 +53,23 @@ object GitHub {
 
 }
 
+/** Interact with GitHub's API v3, using this class.
+  *
+  * This class gets passed an Authorization.Response object, which might be
+  * problematic if you try to create an instance of this class directly.
+  *
+  * Generally, you want to use the GitHub companion object, and pass it
+  * a username and password. That will act as a factory, and give you a valid
+  * instance of the GitHub class.
+  *
+  * @constructor creates an instance of GitHub, but assumes authorization was
+  *              already successful.
+  * @param authorization a valid [[GitHub.Authorization.Response]] (which
+  *                      contains a valid token)
+  * @param scopes a list of valid GitHub scopes that are being requested
+  * @param note a note that GitHub stores, so the user can recall why the
+  *             authorization was created.
+  */
 class GitHub(
   val authorization: Authorization.Response,
   val scopes: List[String] = Nil,

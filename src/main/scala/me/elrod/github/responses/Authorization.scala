@@ -1,6 +1,12 @@
 package me.elrod.GitHub
 
+/** Helpers for GitHub authorization.
+  *
+  * This object contains things global to the authorization process.
+  */
 object Authorization {
+
+  /** All valid scopes for the API. */
   val AllScopes: List[String] = List(
     "user",
     "public_repo",
@@ -14,6 +20,7 @@ object Authorization {
     url: String
   )
 
+  /** A response from the API. */
   case class Response(
     id: Int,
     url: String,
