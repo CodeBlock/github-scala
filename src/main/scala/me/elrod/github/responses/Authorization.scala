@@ -1,6 +1,14 @@
-package me.elrod.github
+package me.elrod.GitHub
 
 object Authorization {
+  val AllScopes: List[String] = List(
+    "user",
+    "public_repo",
+    "repo",
+    "delete_repo",
+    "gist"
+  )
+
   case class Application(
     name: String,
     url: String

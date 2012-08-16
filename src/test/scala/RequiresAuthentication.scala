@@ -1,4 +1,4 @@
-package me.elrod.github.tests
+package me.elrod.GitHub.tests
 
 trait Authentication {
       val username = scala.util.Properties.envOrNone("GITHUB_USERNAME") match {

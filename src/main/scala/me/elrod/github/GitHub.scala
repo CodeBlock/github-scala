@@ -1,4 +1,4 @@
-package me.elrod.github
+package me.elrod.GitHub
 
 import dispatch._
 import net.liftweb.json._
@@ -7,14 +7,6 @@ import Http._
 
 /** Convenience fields for interacting with GitHub APIv3. */
 object GitHub {
-  val AllScopes: List[String] = List(
-    "user",
-    "public_repo",
-    "repo",
-    "delete_repo",
-    "gist"
-  )
-
   val http = new Http() with NoLogging
   implicit val formats = net.liftweb.json.DefaultFormats
 
@@ -24,7 +16,7 @@ object GitHub {
     scopes: List[String] = Nil,
     note: String = "GitHub API Client for Scala") = {
 
-    val authorization: Authorization.Response = GitHub.acquireToken(
+    val authorization: Authorization.Response = basicAuthentication(
       username,
       password,
       scopes,
@@ -32,13 +24,16 @@ object GitHub {
     new GitHub(authorization, scopes, note)
   }
 
-
-  /** Attempt to authenticate with GitHub via OAuth.
+  /** Attempt to obtain an OAuth Authorization.
     *
-    * @return a [[GitHub.AuthenticationResponse]], which contains the response
+    * @param username the person's GitHub username
+    * @param password the person's GitHub password
+    * @param scopes API scopes being requested. To request all possible scopes,
+    *        pass [[GitHub.Authorization.AllScopes]].
+    * @return a [[GitHub.Authentication.Response]], which contains the response
     *         from GitHub in the form of an object.
     */
-  def acquireToken(
+  def basicAuthentication(
     username: String,
     password: String,
     scopes: List[String] = Nil,
@@ -58,16 +53,6 @@ object GitHub {
 
 }
 
-/** Authenticate to GitHub and provide access to API Version 3.
-  *
-  * @constructor create a new client to the GitHub API.
-  * @param username a valid GitHub username
-  * @param password a valid password for the given GitHub username
-  * @param scopes the API scopes to be requested. To request all possible
-  *               scopes use GitHub.AllScopes
-  * @param note a note to add to the authorization, to later remind the user
-  *             of why it was created
-  */
 class GitHub(
   val authorization: Authorization.Response,
   val scopes: List[String] = Nil,

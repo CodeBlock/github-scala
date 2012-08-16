@@ -1,6 +1,6 @@
 import org.scalatest.{FunSpec, BeforeAndAfterAll}
-import me.elrod.github.tests._
-import me.elrod.github._
+import me.elrod.GitHub.tests._
+import me.elrod.GitHub._
 
 class AuthenticationSpec extends FunSpec
   with Authentication
