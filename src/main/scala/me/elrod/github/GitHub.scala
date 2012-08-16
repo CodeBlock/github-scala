@@ -15,6 +15,24 @@ object GitHub {
     "gist"
   )
 
+  val http = new Http() with NoLogging
+  implicit val formats = net.liftweb.json.DefaultFormats
+
+  def apply(
+    username: String,
+    password: String,
+    scopes: List[String] = Nil,
+    note: String = "GitHub API Client for Scala") = {
+
+    val authorization: GitHub.AuthenticationResponse = GitHub.acquireToken(
+      username,
+      password,
+      scopes,
+      note)
+    new GitHub(authorization, scopes, note)
+  }
+
+
   case class Application(
     name: String,
     url: String
@@ -32,6 +50,29 @@ object GitHub {
     created_at: String
   )
 
+  /** Attempt to authenticate with GitHub via OAuth.
+    *
+    * @return a [[GitHub.AuthenticationResponse]], which contains the response
+    *         from GitHub in the form of an object.
+    */
+  def acquireToken(
+    username: String,
+    password: String,
+    scopes: List[String] = Nil,
+    note: String = "GitHub API Client for Scala"): AuthenticationResponse = {
+
+    val data = compact(render(decompose(
+      Map(
+        "scopes" -> scopes,
+        "note"   -> note
+      )
+    )))
+
+    val request = :/("api.github.com", 443) / "authorizations"
+    GitHub.http(request.POST.secure.as_!(username, password) << data >- parse)
+      .extract[AuthenticationResponse]
+  }
+
 }
 
 /** Authenticate to GitHub and provide access to API Version 3.
@@ -44,42 +85,8 @@ object GitHub {
   * @param note a note to add to the authorization, to later remind the user
   *             of why it was created
   */
-class GitHub(private val username: String,
-  private val password: String,
+class GitHub(
+  val authorization: GitHub.AuthenticationResponse,
   val scopes: List[String] = Nil,
   val note: String = "GitHub API Client for Scala") {
-
-  val http = new Http() with NoLogging
-  implicit val formats = net.liftweb.json.DefaultFormats
-
-  /** Attempt to authenticate with GitHub via OAuth.
-    *
-    * @return an AuthenticationResponse, which contains the response from GitHub
-    *         in the form of an object.
-    */
-  def acquireToken(): GitHub.AuthenticationResponse = {
-    val data = compact(render(decompose(
-      Map(
-        "scopes" -> scopes,
-        "note"   -> "github-scala api client"
-      )
-    )))
-
-    val request = :/("api.github.com", 443) / "authorizations"
-    http(request.POST.secure.as_!(username, password) << data >- parse)
-      .extract[GitHub.AuthenticationResponse]
-  }
-
-  /** Obtain a list of current authorizations.
-    *
-    * @return a List[AuthenticationResponse] containing authorizations made
-    *         by the user.
-    */
-  def authorizations(): List[GitHub.AuthenticationResponse] = {
-    val request = :/("api.github.com", 443) / "authorizations"
-    val authorizations = http(request.secure.as_!(username, password) >-
-      parse).children
-    for (authorization <- authorizations) yield
-      authorization.extract[GitHub.AuthenticationResponse]
-  }
 }
