@@ -24,7 +24,7 @@ object GitHub {
     scopes: List[String] = Nil,
     note: String = "GitHub API Client for Scala") = {
 
-    val authorization: GitHub.AuthenticationResponse = GitHub.acquireToken(
+    val authorization: Authorization.Response = GitHub.acquireToken(
       username,
       password,
       scopes,
@@ -32,23 +32,6 @@ object GitHub {
     new GitHub(authorization, scopes, note)
   }
 
-
-  case class Application(
-    name: String,
-    url: String
-  )
-
-  case class AuthenticationResponse(
-    id: Int,
-    url: String,
-    scopes: List[String],
-    token: String,
-    app: Application,
-    note: String,
-    note_url: String,
-    updated_at: String,
-    created_at: String
-  )
 
   /** Attempt to authenticate with GitHub via OAuth.
     *
@@ -59,7 +42,7 @@ object GitHub {
     username: String,
     password: String,
     scopes: List[String] = Nil,
-    note: String = "GitHub API Client for Scala"): AuthenticationResponse = {
+    note: String = "GitHub API Client for Scala"): Authorization.Response = {
 
     val data = compact(render(decompose(
       Map(
@@ -70,7 +53,7 @@ object GitHub {
 
     val request = :/("api.github.com", 443) / "authorizations"
     GitHub.http(request.POST.secure.as_!(username, password) << data >- parse)
-      .extract[AuthenticationResponse]
+      .extract[Authorization.Response]
   }
 
 }
@@ -86,7 +69,7 @@ object GitHub {
   *             of why it was created
   */
 class GitHub(
-  val authorization: GitHub.AuthenticationResponse,
+  val authorization: Authorization.Response,
   val scopes: List[String] = Nil,
   val note: String = "GitHub API Client for Scala") {
 }
