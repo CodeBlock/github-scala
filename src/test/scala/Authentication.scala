@@ -22,4 +22,10 @@ class AuthenticationSpec extends FunSpec
       }
     }
 
+    it("can list all active authorizations") {
+      val gh = new GitHub(username, password)
+      val authentication = gh.acquireToken()
+      val authorizations = gh.authorizations
+      assert(authorizations.isEmpty == false)
+    }
 }

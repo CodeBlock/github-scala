@@ -68,6 +68,18 @@ class GitHub(private val username: String,
     val request = :/("api.github.com", 443) / "authorizations"
     http(request.POST.secure.as_!(username, password) << data >- parse)
       .extract[GitHub.AuthenticationResponse]
+  }
 
+  /** Obtain a list of current authorizations.
+    *
+    * @return a List[AuthenticationResponse] containing authorizations made
+    *         by the user.
+    */
+  def authorizations(): List[GitHub.AuthenticationResponse] = {
+    val request = :/("api.github.com", 443) / "authorizations"
+    val authorizations = http(request.secure.as_!(username, password) >-
+      parse).children
+    for (authorization <- authorizations) yield
+      authorization.extract[GitHub.AuthenticationResponse]
   }
 }
